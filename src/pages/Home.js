@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProjectDetails from "../components/ProjectDetails";
+import ProjectForm from "../components/ProjectForm";
 
 const Home = () => {
   const [project, setProject] = useState([]);
@@ -37,7 +38,7 @@ const Home = () => {
             ))}
         </div>
       </div>
-      <div className="right"></div>
+     <ProjectForm/>
     </div>
   );
 };
