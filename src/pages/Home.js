@@ -1,30 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ProjectDetails from "../components/ProjectDetails";
 import ProjectForm from "../components/ProjectForm";
+import { useProjectsContext } from "../hooks/useProjectsContext";
 
 const Home = () => {
-  const [project, setProject] = useState([]);
-  const [loading, setLoding] = useState(false);
-  const [error, setError] = useState("");
 
   //data fetch
+  const { projects, dispatch } = useProjectsContext();
   useEffect(() => {
-    const getProject = async () => {
-      try {
-        setLoding(true);
-        const res = await fetch("http://localhost:8000/api/projects");
-        if (!res.ok) throw new Error("Something went wrong");
-        const data = await res.json();
-        setProject(data);
-        console.log(data);
-        setLoding(false);
-      } catch (err) {
-        setError(err.message);
-        setLoding(false);
+
+    const getAllProjects = async () => {
+      const res = await fetch("http://localhost:8000/api/projects");
+      const json = await res.json();
+console.log(res)
+      if(res.ok) {
+        dispatch({ type:"SET_PROJECTS", payload: json });
       }
     };
-    getProject();
-  }, []);
+
+    getAllProjects();
+    
+  }, [dispatch]);
+
 
   return (
     <div className="home container mx-auto py-20 grid grid-cols-3 gap-10">
@@ -32,8 +29,8 @@ const Home = () => {
         <h2 className="text-4xl font-medium text-sky-400 mb-10">All Projects</h2>
 
         <div className="projects-wrappper flex gap-10 flex-wrap">
-          {project &&
-            project.map((project) => (
+          {projects &&
+            projects.map((project) => (
               <ProjectDetails key={project._id} project={project} />
             ))}
         </div>
