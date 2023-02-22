@@ -12,14 +12,13 @@ const Home = () => {
     const getAllProjects = async () => {
       const res = await fetch("http://localhost:8000/api/projects");
       const json = await res.json();
-console.log(res)
       if(res.ok) {
         dispatch({ type:"SET_PROJECTS", payload: json });
       }
     };
 
     getAllProjects();
-    
+
   }, [dispatch]);
 
 
