@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useProjectsContext } from "../hooks/useProjectsContext";
 
-const ProjectForm = () => {
-  const [title, setTitle] = useState("");
-  const [tech, setTech] = useState("");
-  const [budget, setBudget] = useState("");
-  const [duration, setDuration] = useState("");
-  const [manager, setManager] = useState("");
-  const [dev, setDev] = useState("");
+const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
+  const [title, setTitle] = useState(project? project.title: "");
+  const [tech, setTech] = useState(project ? project.tech: "");
+  const [budget, setBudget] = useState(project? project.budget: "");
+  const [duration, setDuration] = useState(project? project.duration :'');
+  const [manager, setManager] = useState(project? project.manager:"");
+  const [dev, setDev] = useState(project? project.dev: "");
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFileds] = useState([]);
 
@@ -18,40 +18,85 @@ const ProjectForm = () => {
 
     //data
     const projectObj = { title, tech, budget, duration, manager, dev };
-    //post request
-    const res = await fetch("http://localhost:8000/api/projects", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(projectObj),
-    });
+    // if there is no project
 
-    const json = await res.json();
+    if (!project) {
+      //post request
+      const res = await fetch("http://localhost:8000/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(projectObj),
+      });
 
-    // !req.ok set error
-    if (!res.ok) {
-      setError(json.error);
-      setEmptyFileds(json.emptyFields);
+      const json = await res.json();
+
+      // !req.ok set error
+      if (!res.ok) {
+        setError(json.error);
+        setEmptyFileds(json.emptyFields);
+      }
+      //req.ok rest
+      if (res.ok) {
+        setTitle("");
+        setTech("");
+        setBudget("");
+        setDuration("");
+        setManager("");
+        setDev("");
+        setError(null);
+        emptyFields([]);
+        dispatch({ type: "CREATE_PROJECT", payload: json });
+      }
+      return;
     }
-    //req.ok rest
-    if (res.ok) {
-      setTitle("");
-      setTech("");
-      setBudget("");
-      setDuration("");
-      setManager("");
-      setDev("");
-      setError(null);
-      emptyFields([])
-      dispatch({ type: "CREATE_PROJECT", payload: json });
+
+    //if there is a project
+    if (project) {
+      //send patch req
+      const res = await fetch(
+        `http://localhost:8000/api/projects/${project._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(projectObj),
+        }
+      );
+
+      const json = await res.json();
+      // !res.ok
+      if (!res.ok) {
+        setError(json.error);
+       setEmptyFileds(json.emptyFields);
+      }
+      //res.ok
+
+      if (res.ok) {
+        setError(null);
+        setEmptyFileds([]);
+
+        //dispatch
+        dispatch({type:"UPDATE_PROJECT",payload:json})
+
+        //close Overly and Modal
+        setIsModalOpen(false)
+        setIsOverlayOpen(false)
+      }
+
+      return;
     }
-    return;
   };
 
   return (
     <form onSubmit={handleSubmit} className="project-form flex flex-col gap-5">
-      <h2 className="text-4xl font-medium text-sky-400 mb-10">
+      <h2
+        className={`text-4xl font-medium text-sky-400 mb-10 ${
+          project ? "hidden" : ""
+        }`}
+      >
         Add a new Project
       </h2>
 
@@ -186,7 +231,7 @@ const ProjectForm = () => {
         className="bg-sky-400 py-3 text-slate-900 rounded-lg hover:bg-sky-50 duration-300"
       >
         {" "}
-        Add Project
+        {project ? "Confirm Update" : " Add Project"}
       </button>
       {error && (
         <p

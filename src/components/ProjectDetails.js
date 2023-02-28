@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { useProjectsContext } from "../hooks/useProjectsContext";
 import { currrencyFormatter } from "../utils/currencyFormatter";
-import moment from 'moment';
+import moment from "moment";
+import ProjectForm from "./ProjectForm";
 
 const ProjectDetails = ({ project }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
 
-  const {dispatch}=useProjectsContext()
+  const { dispatch } = useProjectsContext();
 
   const handleDelete = async () => {
-    
     const res = await fetch(
       `http://localhost:8000/api/projects/${project._id}`,
       {
@@ -17,12 +19,20 @@ const ProjectDetails = ({ project }) => {
     );
     const json = await res.json();
 
-    if(res.ok){
-      dispatch({type:"DELETE_PROJECT",payload:json})
+    if (res.ok) {
+      dispatch({ type: "DELETE_PROJECT", payload: json });
     }
-
   };
 
+  const handleUpdate = () => {
+    setIsModalOpen(true);
+    setIsOverlayOpen(true);
+  };
+
+  const handleOverlay = () => {
+    setIsModalOpen(false);
+    setIsOverlayOpen(false);
+  };
   return (
     <div className="project bg-slate-800 p-5 rounded-xl shadow-xl border border-slate-700 flex flex-col gap-5 w-[30rem]">
       <div className="top">
@@ -36,10 +46,10 @@ const ProjectDetails = ({ project }) => {
         <div className="left flex flex-col ">
           <span>Budget: {currrencyFormatter(project.budget)}</span>
           <span>
-            Added on: {moment(project.createdAt).format('DD/MM,hh:mm A')}
+            Added on: {moment(project.createdAt).format("DD/MM,hh:mm A")}
           </span>
           <span>
-           Updated: {moment(project.updatedAt).format('DD/MM,hh:mm A')}
+            Updated: {moment(project.updatedAt).format("DD/MM,hh:mm A")}
           </span>
         </div>
         <div className="right flex flex-col ">
@@ -52,7 +62,10 @@ const ProjectDetails = ({ project }) => {
         </div>
       </div>
       <div className="bottom flex gap-5">
-        <button className="bg-sky-400 text-slate-900 py-2 px-5 rounded shadow-xl hover:bg-sky-50 duration-300">
+        <button
+          onClick={handleUpdate}
+          className="bg-sky-400 text-slate-900 py-2 px-5 rounded shadow-xl hover:bg-sky-50 duration-300"
+        >
           Update
         </button>
         <button
@@ -61,6 +74,31 @@ const ProjectDetails = ({ project }) => {
         >
           Delete
         </button>
+      </div>
+
+      {/* OVERLAY */}
+      <div
+        onClick={handleOverlay}
+        className={`overlay fixed z-[1] h-screen w-screen bg-slate-900/50 backdrop-blur-sm top-0 right-0 left-0 bottom-0 ${
+          isOverlayOpen ? "" : "hidden"
+        }`}
+      ></div>
+
+      {/* Modal */}
+      <div
+        className={`update-modal w-[35rem] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-800 p-10 rounded-xl border border-slate-700 z-[2] ${
+          isModalOpen ? "" : "hidden"
+        }`}
+      >
+        <h2 className="text-4xl font-medium text-sky-400 mb-10">
+          Update a Project
+        </h2>
+
+        <ProjectForm
+          project={project}
+          setIsModalOpen={setIsModalOpen}
+          setIsOverlayOpen={setIsOverlayOpen}
+        />
       </div>
     </div>
   );
