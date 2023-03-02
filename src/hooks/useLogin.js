@@ -18,7 +18,6 @@ export const useLogin=()=>{
             body:JSON.stringify({email,password})
         })
         const json =await res.json()
-        console.log(json)
         //res.ok ===false
         if(!res.ok){
             setLoding(false)
