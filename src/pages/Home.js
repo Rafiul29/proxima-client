@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import ProjectDetails from "../components/ProjectDetails";
 import ProjectForm from "../components/ProjectForm";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useProjectsContext } from "../hooks/useProjectsContext";
 
 const Home = () => {
@@ -8,21 +9,51 @@ const Home = () => {
   //data fetch
   const { projects, dispatch } = useProjectsContext();
 
+  const {user}=useAuthContext()
   
+  // useEffect(() => {
+  //   const getAllProjects = async () => {
+  //     const res = await fetch("http://localhost:8000/api/projects",{
+  //       headers:{
+  //         Authorization:`Bearer ${user.token}`,
+  //       },
+  //     });
+  //     const json = await res.json();
+  //     if(res.ok) {
+  //       dispatch({ type: "SET_PROJECTS", payload: json });
+  //     }
+  //   };
+
+  // if(user){
+  //   getAllProjects();
+  // }
+
+  // }, [dispatch,user]);
+
+
   useEffect(() => {
     const getAllProjects = async () => {
-      const res = await fetch("http://localhost:8000/api/projects");
+      const res = await fetch(
+      "http://localhost:8000/api/projects",
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
       const json = await res.json();
-      if(res.ok) {
+
+      if (res.ok) {
         dispatch({ type: "SET_PROJECTS", payload: json });
       }
     };
 
-    getAllProjects();
+    if (user) {
+      getAllProjects();
+    }
+  }, [dispatch, user]);
 
-  }, [dispatch]);
-
-
+  
   return (
     <div className="home container mx-auto py-20 grid grid-cols-3 gap-10">
       <div className="left col-span-2">

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useProjectsContext } from "../hooks/useProjectsContext";
 
 const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
@@ -10,16 +11,21 @@ const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
   const [manager, setManager] = useState(project? project.manager:"");
   const [dev, setDev] = useState(project? project.dev: "");
   const [error, setError] = useState(null);
-  const [emptyFields, setEmptyFileds] = useState([]);
+  const [emptyFields, setEmptyFields] = useState([]);
 
   const { dispatch } = useProjectsContext();
+  const {user}=useAuthContext()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    //data
-    const projectObj = { title, tech, budget, duration, manager, dev };
     // if there is no project
+    if(!user){
+      setError("You must be logged in")
+    }
+
+       //data
+       const projectObj = { title, tech, budget, duration, manager, dev };
 
     if (!project) {
       //post request
@@ -27,8 +33,9 @@ const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization:`Bearer ${user.token}`,
         },
-        body: JSON.stringify(projectObj),
+         body: JSON.stringify(projectObj),
       });
 
       const json = await res.json();
@@ -36,7 +43,7 @@ const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
       // !req.ok set error
       if (!res.ok) {
         setError(json.error);
-        setEmptyFileds(json.emptyFields);
+        setEmptyFields(json.emptyFields);
       }
       //req.ok rest
       if (res.ok) {
@@ -47,11 +54,12 @@ const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
         setManager("");
         setDev("");
         setError(null);
-        emptyFields([]);
+        setEmptyFields([]);
         dispatch({ type: "CREATE_PROJECT", payload: json });
       }
       return;
     }
+
 
     //if there is a project
     if (project) {
@@ -62,6 +70,7 @@ const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Authorization:`Bearer ${user.token}`,
           },
           body: JSON.stringify(projectObj),
         }
@@ -71,13 +80,13 @@ const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
       // !res.ok
       if (!res.ok) {
         setError(json.error);
-       setEmptyFileds(json.emptyFields);
+       setEmptyFields(json.emptyFields);
       }
       //res.ok
 
       if (res.ok) {
         setError(null);
-        setEmptyFileds([]);
+        setEmptyFields([]);
 
         //dispatch
         dispatch({type:"UPDATE_PROJECT",payload:json})
