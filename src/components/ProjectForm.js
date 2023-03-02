@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useProjectsContext } from "../hooks/useProjectsContext";
 
 const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
+  
   const [title, setTitle] = useState(project? project.title: "");
   const [tech, setTech] = useState(project ? project.tech: "");
   const [budget, setBudget] = useState(project? project.budget: "");

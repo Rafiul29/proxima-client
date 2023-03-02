@@ -7,13 +7,14 @@ const Home = () => {
 
   //data fetch
   const { projects, dispatch } = useProjectsContext();
-  useEffect(() => {
 
+  
+  useEffect(() => {
     const getAllProjects = async () => {
       const res = await fetch("http://localhost:8000/api/projects");
       const json = await res.json();
       if(res.ok) {
-        dispatch({ type:"SET_PROJECTS", payload: json });
+        dispatch({ type: "SET_PROJECTS", payload: json });
       }
     };
 
