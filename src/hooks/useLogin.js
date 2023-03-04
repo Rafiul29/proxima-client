@@ -10,7 +10,7 @@ export const useLogin=()=>{
     const login=async(email,password)=>{
         setLoding(true)
         setError(null)
-        const res=await fetch("http://localhost:8000/api/user/login",{
+        const res=await fetch(`${process.env.REACT_APP_BASE_URL}/api/user/login`,{
             method:"POST",
             headers:{
                 "Content-type":"application/json"

@@ -29,7 +29,7 @@ const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
 
     if (!project) {
       //post request
-      const res = await fetch("http://localhost:8000/api/projects", {
+      const res = await fetch(`${process.env.REACT_APP_BASE_URL}/api/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +65,7 @@ const ProjectForm = ({ project, setIsModalOpen, setIsOverlayOpen }) => {
     if (project) {
       //send patch req
       const res = await fetch(
-        `http://localhost:8000/api/projects/${project._id}`,
+        `${process.env.REACT_APP_BASE_URL}/api/projects/${project._id}`,
         {
           method: "PATCH",
           headers: {

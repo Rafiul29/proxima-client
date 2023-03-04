@@ -11,30 +11,11 @@ const Home = () => {
 
   const {user}=useAuthContext()
   
-  // useEffect(() => {
-  //   const getAllProjects = async () => {
-  //     const res = await fetch("http://localhost:8000/api/projects",{
-  //       headers:{
-  //         Authorization:`Bearer ${user.token}`,
-  //       },
-  //     });
-  //     const json = await res.json();
-  //     if(res.ok) {
-  //       dispatch({ type: "SET_PROJECTS", payload: json });
-  //     }
-  //   };
-
-  // if(user){
-  //   getAllProjects();
-  // }
-
-  // }, [dispatch,user]);
-
 
   useEffect(() => {
     const getAllProjects = async () => {
       const res = await fetch(
-      "http://localhost:8000/api/projects",
+      `${process.env.REACT_APP_BASE_URL}/api/projects`,
         {
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -57,7 +38,8 @@ const Home = () => {
   return (
     <div className="home container mx-auto py-20 grid grid-cols-3 gap-10">
       <div className="left col-span-2">
-        <h2 className="text-4xl font-medium text-sky-400 mb-10">All Projects</h2>
+        <h2 className="text-4xl font-medium text-sky-400 mb-10">
+{projects<1 ? "No Projects":"All Project"}        </h2>
 
         <div className="projects-wrappper flex gap-10 flex-wrap">
           {projects &&
