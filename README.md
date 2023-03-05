@@ -1,15 +1,15 @@
 # Proxima
----
+
 Proxima is a user-friendly project management application built using the MERN stack. With Proxima, users can create, edit, and delete projects with ease. The application features secure JWT authentication and frontend protected routes to ensure user privacy and security. 
 
 ## The application also includes the following features:
----
+
 - State management using Context API
 - Styling using Tailwind CSS
 - Responsive design for viewing on all devices
 
 ## Tools Used
----
+
 - MongoDB for data storage
 - Express for backend development
 - React for frontend development
@@ -17,7 +17,7 @@ Proxima is a user-friendly project management application built using the MERN s
 - Tailwind CSS for styling
 
 ## Installation
----
+
 
 ### Client Installation
 1. Clone the client repository using git clone https://github.com/Rafiul29/proxima-client.git
@@ -37,7 +37,7 @@ Proxima is a user-friendly project management application built using the MERN s
 5. Start the server using `npm start`.
 
 # Links
----
+
 - [Live Demo](https://rafiul-proxima.netlify.app/)
 - [Front-End Repository](https://github.com/Rafiul29/proxima-client.git)
 - [Back-End Repository](https://github.com/Rafiul29/proxima-server.git)
